@@ -9,6 +9,7 @@ class PlaylistsHandler {
     this.postSongToPlaylistHandler = this.postSongToPlaylistHandler.bind(this);
     this.getSongsFromPlaylistHandler = this.getSongsFromPlaylistHandler.bind(this);
     this.deleteSongFromPlaylistHandler = this.deleteSongFromPlaylistHandler.bind(this);
+    this.getPlaylistActivitiesHandler = this.getPlaylistActivitiesHandler.bind(this);
   }
 
   async postPlaylistHandler(req, res, next) {
@@ -70,8 +71,9 @@ class PlaylistsHandler {
       const { songId } = req.body;
       const { id: credentialId } = req.user;
 
-      await this._service.verifyPlaylistOwner(id, credentialId);
+      await this._service.verifyPlaylistAccess(id, credentialId);
       await this._service.addSongToPlaylist(id, songId);
+      await this._service.addActivity(id, songId, credentialId, 'add');
 
       return res.status(201).send({
         status: 'success',
@@ -87,7 +89,7 @@ class PlaylistsHandler {
       const { id } = req.params;
       const { id: credentialId } = req.user;
 
-      await this._service.verifyPlaylistOwner(id, credentialId);
+      await this._service.verifyPlaylistAccess(id, credentialId);
       const playlist = await this._service.getSongsFromPlaylist(id);
 
       return res.status(200).send({
@@ -107,12 +109,33 @@ class PlaylistsHandler {
       const { songId } = req.body;
       const { id: credentialId } = req.user;
 
-      await this._service.verifyPlaylistOwner(id, credentialId);
+      await this._service.verifyPlaylistAccess(id, credentialId);
       await this._service.deleteSongFromPlaylist(id, songId);
+      await this._service.addActivity(id, songId, credentialId, 'delete');
 
       return res.status(200).send({
         status: 'success',
         message: 'Lagu berhasil dihapus dari playlist',
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getPlaylistActivitiesHandler(req, res, next) {
+    try {
+      const { id } = req.params;
+      const { id: credentialId } = req.user;
+
+      await this._service.verifyPlaylistAccess(id, credentialId);
+      const activities = await this._service.getPlaylistActivities(id);
+
+      return res.status(200).send({
+        status: 'success',
+        data: {
+          playlistId: id,
+          activities,
+        },
       });
     } catch (error) {
       next(error);
