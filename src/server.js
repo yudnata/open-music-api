@@ -20,13 +20,29 @@ const usersApi = require('./api/users');
 const UsersService = require('./api/users/service');
 const UsersValidator = require('./validator/users');
 
+const authenticationsApi = require('./api/authentications');
+const AuthenticationsService = require('./api/authentications/service');
+const AuthenticationsValidator = require('./validator/authentications');
+const TokenManager = require('./token/TokenManager');
+
 const init = async () => {
   const albumsService = new AlbumsService();
   const songsService = new SongsService();
   const usersService = new UsersService();
+  const authenticationsService = new AuthenticationsService();
 
   const app = express();
   app.use(express.json());
+
+  app.use(
+    '/authentications',
+    authenticationsApi({
+      authenticationsService,
+      usersService,
+      tokenManager: TokenManager,
+      validator: AuthenticationsValidator,
+    })
+  );
 
   app.use(
     '/users',
