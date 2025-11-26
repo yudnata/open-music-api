@@ -25,14 +25,27 @@ const AuthenticationsService = require('./api/authentications/service');
 const AuthenticationsValidator = require('./validator/authentications');
 const TokenManager = require('./token/TokenManager');
 
+const playlistsApi = require('./api/playlists');
+const PlaylistsService = require('./api/playlists/service');
+const PlaylistsValidator = require('./validator/playlists');
+
 const init = async () => {
   const albumsService = new AlbumsService();
   const songsService = new SongsService();
   const usersService = new UsersService();
   const authenticationsService = new AuthenticationsService();
+  const playlistsService = new PlaylistsService();
 
   const app = express();
   app.use(express.json());
+
+  app.use(
+    '/playlists',
+    playlistsApi({
+      service: playlistsService,
+      validator: PlaylistsValidator,
+    })
+  );
 
   app.use(
     '/authentications',
