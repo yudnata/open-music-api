@@ -14,13 +14,27 @@ const BadRequestError = require('./utils/BadRequestError');
 const NotFoundError = require('./utils/NotFoundError');
 const AuthenticationError = require('./utils/AuthenticationError');
 const AuthorizationError = require('./utils/AuthorizationError');
+const InvariantError = require('./utils/InvariantError');
+
+const usersApi = require('./api/users');
+const UsersService = require('./api/users/service');
+const UsersValidator = require('./validator/users');
 
 const init = async () => {
   const albumsService = new AlbumsService();
   const songsService = new SongsService();
+  const usersService = new UsersService();
 
   const app = express();
   app.use(express.json());
+
+  app.use(
+    '/users',
+    usersApi({
+      service: usersService,
+      validator: UsersValidator,
+    })
+  );
 
   // eslint-disable-next-line no-unused-vars
   app.use((err, req, res, next) => {
@@ -49,7 +63,6 @@ const init = async () => {
       });
     }
 
-    // Fallback untuk error server
     if (err.statusCode === 404 || res.statusCode === 404) {
       return res.status(404).send({
         status: 'fail',
@@ -57,7 +70,7 @@ const init = async () => {
       });
     }
 
-    console.error(err.stack); // Log error untuk debugging
+    console.error(err.stack);
     return res.status(500).send({
       status: 'error',
       message: 'Terjadi kegagalan pada server kami',
@@ -97,6 +110,12 @@ const init = async () => {
       return res.status(404).send({
         status: 'fail',
         message: 'Resource tidak ditemukan',
+      });
+    }
+    if (err instanceof InvariantError) {
+      return res.status(err.statusCode).send({
+        status: 'fail',
+        message: err.message,
       });
     }
     console.error(err.stack);
