@@ -1,7 +1,20 @@
 const AlbumsHandler = require('./handler');
 const routes = require('./routes');
 
-module.exports = ({ service, validator }) => {
-  const albumsHandler = new AlbumsHandler(service, validator);
-  return routes(albumsHandler);
+module.exports = ({
+  service,
+  albumLikesService,
+  storageService,
+  validator,
+  uploadsValidator,
+  upload,
+}) => {
+  const albumsHandler = new AlbumsHandler(
+    service,
+    albumLikesService,
+    storageService,
+    validator,
+    uploadsValidator
+  );
+  return routes(albumsHandler, upload);
 };
