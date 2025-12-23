@@ -1,0 +1,19 @@
+{
+  "name": "open-music-consumer",
+  "version": "1.0.0",
+  "description": "Consumer for Open Music API Export Feature",
+  "main": "consumer.js",
+  "scripts": {
+    "start": "node consumer.js",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "amqplib": "^0.10.3",
+    "dotenv": "^16.0.3",
+    "nodemailer": "^6.9.1",
+    "pg": "^8.10.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.39.1"
+  }
+}
