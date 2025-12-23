@@ -14,8 +14,6 @@ class ExportsHandler {
       const { playlistId } = req.params;
       const { targetEmail } = req.body;
       const { id: userId } = req.user;
-
-      // Only playlist owner can export
       await this._playlistsService.verifyPlaylistOwner(playlistId, userId);
 
       const message = {

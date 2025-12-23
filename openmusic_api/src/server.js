@@ -119,8 +119,7 @@ const init = async () => {
     })
   );
 
-  // eslint-disable-next-line no-unused-vars
-  app.use((err, req, res, next) => {
+  app.use((err, req, res, _next) => {
     if (err instanceof ClientError) {
       return res.status(err.statusCode).send({
         status: 'fail',
@@ -136,8 +135,7 @@ const init = async () => {
     });
   });
 
-  // eslint-disable-next-line no-unused-vars
-  app.use((req, res, next) => {
+  app.use((req, res) => {
     res.status(404).send({
       status: 'fail',
       message: 'Endpoint tidak ditemukan',

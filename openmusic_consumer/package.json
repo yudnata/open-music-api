@@ -2,9 +2,9 @@
   "name": "open-music-consumer",
   "version": "1.0.0",
   "description": "Consumer for Open Music API Export Feature",
-  "main": "consumer.js",
+  "main": "src/consumer.js",
   "scripts": {
-    "start": "node consumer.js",
+    "start": "node src/consumer.js",
     "lint": "eslint ."
   },
   "dependencies": {
